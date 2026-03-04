@@ -186,7 +186,7 @@ def build_gamma_model(data, include_sma=True):
 
         # -- Semi-major axis (baseline only) --
         if include_sma:
-            a_over_robs = pm.LogNormal("a_over_robs", mu=0.5, sigma=0.8, shape=N)
+            a_over_robs = pm.LogNormal("a_over_robs", mu=0.23, sigma=0.5, shape=N)
             a = pm.Deterministic("a", a_over_robs * r_obs)
 
         # -- Eccentricity (separation-dependent thermal prior) --
