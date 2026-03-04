@@ -19,7 +19,7 @@ The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) 
 - `chae_2026_data.csv` — the 36-system clean sample with RVs and masses
 - `chae_2025_gaia.csv` — full astrometric data (positions, proper motions, parallaxes)
 
-The curated data files are available upon request.
+Detailed instruction has been added in the readme file inside the `data/` repository.
 
 ## Requirements
 
