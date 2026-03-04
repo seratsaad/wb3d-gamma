@@ -19,6 +19,8 @@ The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) 
 - `chae_2026_data.csv` — the 36-system clean sample with RVs and masses
 - `chae_2025_gaia.csv` — full astrometric data (positions, proper motions, parallaxes)
 
+The curated data files are available upon request.
+
 ## Requirements
 
 - Python ≥ 3.10
@@ -43,13 +45,13 @@ python run_gamma_analysis.py
 ```
 
 This will:
-1. Build and sample the baseline model (~292 parameters)
+1. Build and sample the baseline model
 2. Build and sample the geometric deprojection model
 3. Print summary statistics
 4. Save posterior samples to `posterior_samples.npz`
 5. Save a comparison plot to `gamma_posterior.png`
 
-**Note:** Sampling takes several hours on a modern CPU (4 chains × 2000 tuning + 3000 sampling steps each).
+**Note:** Sampling takes several hours on a modern CPU.
 
 ### Load pre-computed posteriors
 
