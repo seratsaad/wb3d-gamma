@@ -15,7 +15,7 @@
 
 ## Data
 
-The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) and Gaia. Place the two CSV files in a `data/` directory:
+The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) and Gaia. Place the two CSV files in the `data/` directory:
 - `chae_2026_data.csv` — the 36-system clean sample with RVs and masses
 - `chae_2025_gaia.csv` — full astrometric data (positions, proper motions, parallaxes)
 
