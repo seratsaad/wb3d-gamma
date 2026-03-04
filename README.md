@@ -1,23 +1,6 @@
 # Hierarchical Bayesian Reanalysis of Wide Binaries with Reported Gravitational Anomaly
 
-**Saad & Ting (2026)** — Paper II in the WB3D series
-
-## Overview
-
-We reanalyze the 36 wide-binary systems from [Chae (2026)](https://arxiv.org/abs/XXXX.XXXXX) using a hierarchical Bayesian model that infers a single global gravity boost factor γ across all systems while fitting three-dimensional orbital elements.
-
-We compare two model variants:
-- **Baseline model**: semi-major axis is a free parameter; the true 3D separation is computed from Kepler's equation.
-- **Geometric deprojection model**: no independent semi-major axis; the true separation is derived from the observed projected separation and viewing geometry, analogous to the approach of Chae (2026).
-
-### Key result
-
-| Model | γ (median) | 68% CI | P(γ > 1) |
-|---|---|---|---|
-| Baseline | 1.15 | [0.94, 1.44] | 0.75 |
-| Geometric deprojection | 1.56 | [1.38, 1.77] | ~1.00 |
-
-The two models differ only in the treatment of the orbital separation, yet the inferred γ shifts from consistency with Newtonian gravity to consistency with the reported gravitational anomaly.
+**Saad & Ting (2026)**: https://arxiv.org/abs/XXXX.XXXXX
 
 ## Repository contents
 
@@ -32,9 +15,9 @@ The two models differ only in the treatment of the orbital separation, yet the i
 
 ## Data
 
-The input data are taken from [Chae (2026)](https://arxiv.org/abs/XXXX.XXXXX). Place the two CSV files in a `data/` directory:
-- `chae_2026_clean_sample.csv` — the 36-system clean sample with RVs and masses
-- `chae_2025_complete.csv` — full astrometric data (positions, proper motions, parallaxes)
+The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) and Gaia. Place the two CSV files in a `data/` directory:
+- `chae_2026_data.csv` — the 36-system clean sample with RVs and masses
+- `chae_2025_gaia.csv` — full astrometric data (positions, proper motions, parallaxes)
 
 ## Requirements
 
@@ -85,7 +68,7 @@ If you use this code or results, please cite:
 
 ```
 Saad & Ting (2026), "Hierarchical Bayesian Reanalysis of Wide Binaries
-with Reported Gravitational Anomaly", Paper II
+with Reported Gravitational Anomaly"
 ```
 
 ## License
