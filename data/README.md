@@ -1,6 +1,6 @@
 # Data
 
-The input data are from [Chae (2026)]([https://arxiv.org/abs/XXXX.XXXXX](https://arxiv.org/abs/2601.21728v2)). The data files are **not included** in this repository. They are available upon request (saad.104@osu.edu).
+The input data are from [Chae (2026)]([https://arxiv.org/abs/XXXX.XXXXX](https://arxiv.org/abs/2601.21728v2)). The data files are not included in this repository. They are available upon request (saad.104@osu.edu).
 
 Place the two CSV files in this directory with the following names:
 
