@@ -10,7 +10,7 @@
 ├── data/                      # Input data (see below)
 │   ├── chae_2026_data.csv
 │   └── chae_2026_gaia.csv
-│   └── data_readme.md         # Instructions on how to curate data files
+│   └── README.md         # Instructions on how to curate data files
 └── README.md
 ```
 
@@ -20,7 +20,7 @@ The input data are taken from [Chae (2026)](https://arxiv.org/abs/2601.21728v2) 
 - `chae_2026_data.csv` — the 36-system clean sample with RVs and masses
 - `chae_2025_gaia.csv` — full astrometric data (positions, proper motions, parallaxes)
 
-Detailed instruction has been added in the `data/data_readme.md` file.
+Detailed instruction has been added in the `data/README.md` file.
 
 ## Requirements
 
