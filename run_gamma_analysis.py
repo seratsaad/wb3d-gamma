@@ -41,6 +41,7 @@ K_PM = 4.74047           # km/s per mas/yr per pc
 MASS_LN_SIGMA = 0.05     # log-normal width for mass prior
 RV_SYS_MS = 40.0         # additional RV systematic (m/s)
 FRAC_FLOOR = 0.05        # minimum fractional uncertainty on r_obs
+A_PRIOR_SIGMA = 0.6      # sigma in the prior form semi major axis
 
 
 # =============================================================================
@@ -184,11 +185,7 @@ def build_gamma_model(data, include_sma=True):
         M1 = M1_sol * M_SUN
         M2 = M2_sol * M_SUN
 
-        # -- Semi-major axis (baseline only) --
-        if include_sma:
-            a_over_robs = pm.LogNormal("a_over_robs", mu=0.23, sigma=0.5, shape=N)
-            a = pm.Deterministic("a", a_over_robs * r_obs)
-
+      
         # -- Eccentricity (separation-dependent thermal prior) --
         sep_au = pm.Data("sep_au", data["r_obs"].values / AU)
         bin_edges = np.array([0, 100, 300, 1000, 3000, 1e6], dtype=float)
@@ -206,6 +203,16 @@ def build_gamma_model(data, include_sma=True):
         e_raw = pm.Beta("e_raw", alpha=pt.maximum(alpha + 1.0, 0.1),
                         beta=1.0, shape=N)
         e = pm.Deterministic("e", pt.minimum(e_raw, 0.98))
+
+        
+        # -- Semi-major axis (baseline only) --
+        if include_sma:
+            s_e = pt.sqrt(pt.clip(1.0 - e**2, 1e-12, np.inf))
+            mu_log_a_over_robs = pm.Deterministic("mu_log_a_over_robs",s_e - pt.log(1.0 + s_e))
+
+            log_a_over_robs = pm.Normal("log_a_over_robs",mu=mu_log_a_over_robs,sigma=A_PRIOR_SIGMA,shape=N)
+            a = pm.Deterministic("a", r_obs * pt.exp(log_a_over_robs))
+          
 
         # -- Orbital angles --
         M_anom = pm.Uniform("M_anom", 0.0, 2 * np.pi, shape=N)
