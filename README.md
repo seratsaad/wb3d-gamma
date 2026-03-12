@@ -1,6 +1,6 @@
 # Hierarchical Bayesian Reanalysis of 36 Wide Binaries with Reported Gravitational Anomaly
 
-**Saad & Ting (2026)**: https://arxiv.org/abs/XXXX.XXXXX
+**Saad & Ting (2026)**: [https://arxiv.org/abs/XXXX.XXXXX](https://arxiv.org/abs/2603.11015v1)
 
 ## Repository contents
 
