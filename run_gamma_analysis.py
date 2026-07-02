@@ -41,7 +41,6 @@ K_PM = 4.74047           # km/s per mas/yr per pc
 MASS_LN_SIGMA = 0.05     # log-normal width for mass prior
 RV_SYS_MS = 40.0         # additional RV systematic (m/s)
 FRAC_FLOOR = 0.05        # minimum fractional uncertainty on r_obs
-A_PRIOR_SIGMA = 0.6      # sigma in the prior form semi major axis
 
 
 # =============================================================================
@@ -140,7 +139,7 @@ def prepare_data(clean_csv_path, full_csv_path):
 # =============================================================================
 # Model builder
 # =============================================================================
-def build_gamma_model(data, include_sma=True):
+def build_gamma_model(data, include_sma=True, sma_prior="bpl"):
     """
     Build the hierarchical Bayesian model for gamma inference.
 
@@ -151,6 +150,13 @@ def build_gamma_model(data, include_sma=True):
     include_sma : bool
         If True, include semi-major axis as a free parameter (baseline model).
         If False, derive r_true from geometric deprojection of r_obs.
+    sma_prior : {"lognormal", "bpl"}
+        Prior on the semi-major axis when include_sma=True.
+        "lognormal" : a/r_obs ~ LogNormal(0.5, 0.8)  [committed repo / arXiv v1].
+        "bpl"       : broken power-law P(a) ~ a^-1 (a<=5 kAU), a^-1.6 (a>5 kAU),
+                      per manuscript v2 Eq. 3 (Andrews 2017; Pittordis 2023).
+                      Implemented as log(a/r_obs) ~ U(-1,2.5) [Opik base] plus a
+                      Potential reweight -0.6*softplus(log(a/a_break)), a_break=5 kAU.
 
     Returns
     -------
@@ -185,7 +191,20 @@ def build_gamma_model(data, include_sma=True):
         M1 = M1_sol * M_SUN
         M2 = M2_sol * M_SUN
 
-      
+        # -- Semi-major axis (baseline only) --
+        if include_sma:
+            if sma_prior == "bpl":
+                # Broken power-law prior (manuscript v2, Eq. 3).
+                A_BREAK_M = 5000.0 * AU  # 5 kAU break (Pittordis & Sutherland 2023)
+                log_a = pm.Uniform("log_a", lower=-1.0, upper=2.5, shape=N)
+                a = pm.Deterministic("a", r_obs * pt.exp(log_a))
+                # flat log(a/r_obs) = Opik a^-1 base; reweight to a^-1.6 above break
+                pm.Potential("bpl_sma",
+                             pt.sum(-0.6 * pt.softplus(pt.log(a / A_BREAK_M))))
+            else:
+                a_over_robs = pm.LogNormal("a_over_robs", mu=0.5, sigma=0.8, shape=N)
+                a = pm.Deterministic("a", a_over_robs * r_obs)
+
         # -- Eccentricity (separation-dependent thermal prior) --
         sep_au = pm.Data("sep_au", data["r_obs"].values / AU)
         bin_edges = np.array([0, 100, 300, 1000, 3000, 1e6], dtype=float)
@@ -203,16 +222,6 @@ def build_gamma_model(data, include_sma=True):
         e_raw = pm.Beta("e_raw", alpha=pt.maximum(alpha + 1.0, 0.1),
                         beta=1.0, shape=N)
         e = pm.Deterministic("e", pt.minimum(e_raw, 0.98))
-
-        
-        # -- Semi-major axis (baseline only) --
-        if include_sma:
-            s_e = pt.sqrt(pt.clip(1.0 - e**2, 1e-12, np.inf))
-            mu_log_a_over_robs = pm.Deterministic("mu_log_a_over_robs",s_e - pt.log(1.0 + s_e))
-
-            log_a_over_robs = pm.Normal("log_a_over_robs",mu=mu_log_a_over_robs,sigma=A_PRIOR_SIGMA,shape=N)
-            a = pm.Deterministic("a", r_obs * pt.exp(log_a_over_robs))
-          
 
         # -- Orbital angles --
         M_anom = pm.Uniform("M_anom", 0.0, 2 * np.pi, shape=N)
@@ -390,7 +399,8 @@ def print_gamma_stats(trace, label=""):
 # =============================================================================
 # Main
 # =============================================================================
-def run_analysis(clean_csv, full_csv, n_tune=2000, n_samples=3000, n_chains=4):
+def run_analysis(clean_csv, full_csv, n_tune=2000, n_samples=3000, n_chains=4,
+                 sma_prior="bpl"):
     """
     Run the full analysis: baseline + geometric deprojection models.
 
@@ -409,7 +419,7 @@ def run_analysis(clean_csv, full_csv, n_tune=2000, n_samples=3000, n_chains=4):
     print("Baseline model (with semi-major axis)")
     print("=" * 60)
     t0 = time.time()
-    model_baseline = build_gamma_model(data, include_sma=True)
+    model_baseline = build_gamma_model(data, include_sma=True, sma_prior=sma_prior)
     trace_baseline = sample_model(model_baseline, n_tune, n_samples, n_chains)
     print(f"  Elapsed: {time.time() - t0:.0f}s")
     g_baseline = print_gamma_stats(trace_baseline, "Baseline")
